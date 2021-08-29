@@ -1,0 +1,49 @@
+{
+  "name": "@keg-hub/keg-git",
+  "version": "0.0.0",
+  "description": "Git wrapper library",
+  "main": "index.js",
+  "repository": "https://github.com/lancetipton/keg-git",
+  "author": "Lance Tipton",
+  "license": "MIT",
+  "private": false,
+  "keywords": [
+    "git",
+    "github",
+    "keg-hub",
+    "node-git",
+    "cli"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf ./yarn.lock; rimraf ./package.lock; rimraf node_modules",
+    "clean:full": "yarn clean; yarn install",
+    "format": "yarn pretty",
+    "pretty": "./node_modules/.bin/prettier --config ./configs/prettier.config.js --write '**/*.{js,jsx}'",
+    "test": "NODE_ENV=test jest --no-cache --verbose --config=./configs/jest.config.js"
+  },
+  "dependencies": {
+    "@keg-hub/ask-it": "0.0.2",
+    "@keg-hub/cli-utils": "0.2.1",
+    "@keg-hub/jsutils": "8.5.0",
+    "@keg-hub/spawn-cmd": "0.1.2",
+    "@octokit/rest": "18.9.1",
+    "@keg-hub/parse-config": "0.0.3",
+    "@material-ui/core": "4.11.4",
+    "@octokit/plugin-retry": "^3.0.9",
+    "@octokit/plugin-throttling": "^3.5.1",
+    "@octokit/graphql": "4.7.0",
+    "app-root-path": "3.0.0",
+    "axios": "0.21.1",
+    "isomorphic-git": "1.9.2",
+    "module-alias": "2.2.2",
+    "rimraf": "3.0.2"
+  },
+  "devDependencies": {
+    "jest": "26.4.2",
+    "prettier": "^2.2.1",
+    "rimraf": "3.0.2"
+  }
+}
