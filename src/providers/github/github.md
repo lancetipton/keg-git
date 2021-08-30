@@ -9,8 +9,8 @@ Call with paging iterator helper
   for await (const response of this.api.paginate.iterator(
     this.api.repos.listForAuthenticatedUser,
     {
-      visibility: 'private',
-      affiliation: 'owner',
+      visibility: 'all',
+      affiliation: 'owner,collaborator,organization_member',
     })) {
     repos = repos.concat(response.data)
   }
@@ -21,8 +21,8 @@ Call with paging iterator helper
 Call with paging helper
 ```js
   const repos = await this.api.paginate(this.api.repos.listForAuthenticatedUser, {
-    visibility: 'private',
-    affiliation: 'owner',
+    visibility: 'all',
+    affiliation: 'owner,collaborator,organization_member',
   })
 
   return repos
@@ -32,9 +32,9 @@ Call with paging helper
 Direct call, no paging
 ```js
   const repos = await this.api.repos.listForAuthenticatedUser({
-    visibility: 'private',
+    visibility: 'all',
+    affiliation: 'owner,collaborator,organization_member',
     per_page: 100,
-    affiliation: 'owner',
   })
 
   return repos && repos.data

@@ -8,7 +8,9 @@ class GitProvider {
   constructor(git){
     this.git = git
     this.auth = this.git.config.auth
-    this.api = initOctokit(this)
+    const { rest, graph } = initOctokit(this)
+    this.api = rest
+    this.graph = graph
     this.repo = new Repo(this)
     this.team = new Team(this)
     this.org = new Organization(this)

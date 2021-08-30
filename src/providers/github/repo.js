@@ -1,4 +1,8 @@
-const { exists } = require('@keg-hub/jsutils')
+const { GRAPH } = require("KGConstants")
+const { graphCache } = require('./utils/graphCache')
+const { exists, limbo, get, noOpObj, noPropArr } = require('@keg-hub/jsutils')
+const { buildGraphOpts } = require('./utils/buildGraphOpts')
+
 
 const getUserRepos = async (api, args) => {
   return await api.paginate(api.repos.listForAuthenticatedUser, {
@@ -14,13 +18,40 @@ class Repo {
   }
 
   async listAll(args){
-    // TODO: Figure out a way to filter this pre-rest cal
-    // Might make sense to switch to graphQL
-    return await this.api.paginate(this.api.repos.listForAuthenticatedUser, {
-      visibility: 'all',
-      affiliation: 'owner,collaborator,organization_member',
-    })
+    const listAllKey = GRAPH.REPO.LIST_ALL.KEY
+    const [ err, resp ] = await limbo(this.provider.graph.query(
+      `query($first: Int!, $after: String, $affiliations: [RepositoryAffiliation], $ownerAffiliations: [RepositoryAffiliation])
+        {
+          viewer {
+            repositories(first: $first, after: $after, affiliations: $affiliations, ownerAffiliations: $ownerAffiliations) {
+              totalCount
+              pageInfo {
+                endCursor
+                hasNextPage
+              }
+              nodes{
+                url
+                name
+                  owner {
+                    login
+                  }
+              }
+            }
+          }
+        }`,
+      buildGraphOpts(this.provider, args, listAllKey)
+    ))
 
+    err && this.provider.graph.error(err)
+
+    const data = get(resp, get(GRAPH, `REPO.LIST_ALL.DATA_PATH`), noOpObj)
+    const { nodes=noPropArr, pageInfo=noOpObj } = data
+
+    pageInfo.hasNextPage && pageInfo.endCursor
+      ? graphCache.set(listAllKey, { after: data.pageInfo.endCursor })
+      : graphCache.reset(listAllKey)
+
+    return nodes
   }
 
   async create(args){
